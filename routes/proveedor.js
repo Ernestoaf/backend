@@ -20,13 +20,33 @@ app.get('/', (req,res,next)=>{
                 errores:err
             })
         }//fin if
-        // res.status(200).json({
-        //     ok:true,
-        //     proveedores:proveedores,
-        // });
-        res.status(200).json(proveedores);
+        res.status(200).json({
+            ok:true,
+            proveedores:proveedores,
+        });
     })
 });
+// metodo get para actualizar un solo proveedor
+app.get('/:id', function(req,res,next){
+    
+    // var id=req.params.id;
+    // coge el id que estamos pasando como aprametro en req.params.id y con el metodo findById bucaremos
+    //  con ese id en proveedores, por lo que solo nos `puede devolver un proveedor
+    Proveedor.findById(req.params.id,(err,proveedor)=>{
+        if(err){
+            return res.status(500).json({
+                ok:false,
+                mensaje:'Error de acceso a DB',
+                errores:err
+            })
+        }
+        res.status(200).json({
+            ok:true,
+            proveedor:proveedor
+        })
+    })
+})
+
 //  le ponemos la ruta raiz ya que en el backend le añadiremos el archivo principal
 // y le introducimos la funcion flecha que recibira req, res
 app.post('/', (req, res) => {
@@ -63,6 +83,32 @@ app.post('/', (req, res) => {
         res.status(200).json({
             ok: true,
             proveedor: proveedorGuardado,
+        });
+    });
+});
+
+// Método put, actualizar contenido
+app.put('/:id', function(req, res, next) {
+    // Buscar por id y actualiza
+    Proveedor.findByIdAndUpdate(req.params.id, req.body, function(err, datos) {
+        // Si hay error
+        if (err) return next(err);
+        // Si no hay error
+        res.status(201).json({
+            ok: true,
+            mensaje: 'Proveedor actualizado'
+        });
+    });
+});
+
+// Método delete, borrar contenido
+app.delete('/:id', function(req, res, error) {
+    // Buscar por id y borrar
+    Proveedor.findByIdAndRemove(req.params.id, function(err, datos) {
+        if (err) return next(err);
+        res.status(201).json({
+            ok: true,
+            mensaje: 'Proveedor eliminado'
         });
     });
 });
